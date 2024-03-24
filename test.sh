@@ -21,4 +21,7 @@ function assert() {
 assert 0 0
 assert 42 42
 
+assert 21 '5+20-4'
+assert 35 '1+2+3+4-5+6+7+8+9'
+
 echo OK
