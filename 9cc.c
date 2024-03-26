@@ -33,10 +33,25 @@ void error(char *fmt, ...) {
     exit(1);
 }
 
+char *user_input;
+
+void error_at(char *loc, char *fmt, ...){
+    va_list ap;
+    va_start(ap, fmt);
+
+    int pos = loc - user_input;
+    fprintf(stderr, "%s\n", user_input);
+    fprintf(stderr, "%*s", pos, " "); //pos個の空白を出力
+    fprintf(stderr, "^ ");
+    vfprintf(stderr, fmt, ap);
+    fprintf(stderr, "\n");
+    exit(1);
+}
+
 // 数値の場合、Tokenを一つ読んでその数値を返す
 int expect_number(){
     if(token->kind != TK_NUM){
-        error("数値ではありません");
+        error_at(token->str, "数値ではありません");
     }
     int val = token->val;
     token = token->nextToken;
@@ -46,7 +61,7 @@ int expect_number(){
 // 次のTokenの期待が記号のためには、Tokenを一つ読みとって進める
 void  expect(char op){
     if(token->kind != TK_MARK || token->str[0] != op){
-        error("'%c'ではありません", op);
+        error_at(token->str, "'%c'ではありません", op);
     }
     token = token->nextToken;
 }
@@ -67,7 +82,8 @@ Token *new_token(TokenKind kind, char *p, Token *cur){
     return tok;
 }
 
-Token *tokenize(char *argv) {
+Token *tokenize() {
+    char *argv = user_input;
     Token head;
     head.nextToken = NULL;
 
@@ -94,7 +110,7 @@ Token *tokenize(char *argv) {
             continue;
         }
 
-        error("トークナイズできません");
+        error_at(token->str, "トークナイズできません");
     }
 
     new_token(TK_EOF, argv, cur);
@@ -104,11 +120,12 @@ Token *tokenize(char *argv) {
 
 int main(int argc, char **argv) {
     if(argc != 2){
-        fprintf(stderr, "引数の個数が正しくありません。\n");
+        error("引数の個数が正しくありません");
         return 1;
     }
 
-    token = tokenize(argv[1]);
+    user_input = argv[1];
+    token = tokenize();
 
     printf(".intel_syntax noprefix\n");
     printf(".global main\n");
