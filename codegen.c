@@ -11,13 +11,9 @@ void gen_lval(Node *node){
     if (node->kind != ND_LVAR)
         error("代入の左辺値が変数ではありません");
 
-    int offset = (node->name - 'a' + 1) * 8;
+    int offset = node->offset;
     printf("  lea rax, [rbp-%d]\n", offset);
     printf("  push rax\n");
-    
-    // printf("  pop rax\n");
-    // printf("  mov rax, [rax]\n");
-    // printf("  push rax\n");
 }
 
 void gen(Node *node) {

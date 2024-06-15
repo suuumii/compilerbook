@@ -35,11 +35,12 @@ Token *tokenize(char *p) {
             continue;
         }
 
-        if('a' <= *p && *p <= 'z') {
-            cur = new_token(TK_IDENT, p, cur, 1);
-            p++;
-            continue;
-        }
+        // １文字変数
+        // if('a' <= *p && *p <= 'z') {
+        //     cur = new_token(TK_IDENT, p, cur, 1);
+        //     p++;
+        //     continue;
+        // }
 
         if(startSwitch(p, "==") || startSwitch(p, "!=")
             || startSwitch(p, "<=") || startSwitch(p, ">=")) {
@@ -51,6 +52,18 @@ Token *tokenize(char *p) {
         if(strchr("+-*/()<>=;", *p)) {
             cur = new_token(TK_MARK, p, cur, 1);
             p++;
+            continue;
+        }
+
+        if(('A' <= *p && *p <= 'Z') || ('a' <= *p && *p <= 'z') || (*p == '_')) {
+            char *q = p;
+            p++;
+
+            while(('A' <= *p && *p <= 'Z') || ('a' <= *p && *p <= 'z') || (*p == '_') || ('0' <= *p && *p <= '9')){
+                p++;
+            }
+
+            cur = new_token(TK_IDENT, q, cur, p-q);
             continue;
         }
 

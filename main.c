@@ -16,6 +16,7 @@ void printToken(Token *tokenTmp) {
             break;
         }
     }
+    exit(1);
 }
 
 // エラー出力するための関数
