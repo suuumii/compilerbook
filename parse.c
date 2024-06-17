@@ -82,7 +82,7 @@ LVar *find_lvar(Token *tok) {
 }
 
 Node *program(); // stmt*
-Node *stmt(); // expr ";"
+Node *stmt(); // expr ";" | "return" expr ";"
 Node *expr(); // assign
 Node *assign(); //equality ("=" assign)?
 Node *equality(); // relational ("==" relational \ "!=" relational)*
@@ -111,8 +111,17 @@ Node *program() {
 }
 
 Node *stmt() {
-  Node *node = expr();
-  expect(";");
+  Node *node;
+  if(token->kind == TK_RETURN) {
+    token = token->nextToken;
+    node = new_node(ND_RETURN, expr(), NULL);
+  } else {
+    node = expr();
+  }
+
+  if(!consume(";"))
+    error_at(token->str, "';'ではないトークンです");
+
   return node;
 }
 

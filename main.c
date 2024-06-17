@@ -9,14 +9,14 @@
 // デバック用　トークンのstrを最後まで出力
 void printToken(Token *tokenTmp) {
     for(;;) {
-        printf("%.*s ", tokenTmp->len, tokenTmp->str);
+        fprintf(stderr, "%.*s ", tokenTmp->len, tokenTmp->str);
         tokenTmp = tokenTmp->nextToken;
         if (tokenTmp->kind == TK_EOF) {
-            printf("\n");
+            fprintf(stderr,"\n");
             break;
         }
     }
-    exit(1);
+    // exit(1);
 }
 
 // エラー出力するための関数

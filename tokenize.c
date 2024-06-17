@@ -20,6 +20,10 @@ bool startSwitch(char *p, char *q){
     return memcmp(p, q, strlen(q)) == 0;
 }
 
+int is_alnum(char c) {
+    return ('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z') || (c == '_');
+}
+
 Token *tokenize(char *p) {
     Token head;
     head.nextToken = NULL;
@@ -35,12 +39,11 @@ Token *tokenize(char *p) {
             continue;
         }
 
-        // １文字変数
-        // if('a' <= *p && *p <= 'z') {
-        //     cur = new_token(TK_IDENT, p, cur, 1);
-        //     p++;
-        //     continue;
-        // }
+        if(strncmp(p, "return", 6) == 0 && !is_alnum(p[6])){
+            cur = new_token(TK_RETURN, p, cur, 6);
+            p += 6;
+            continue;
+        }
 
         if(startSwitch(p, "==") || startSwitch(p, "!=")
             || startSwitch(p, "<=") || startSwitch(p, ">=")) {
@@ -55,11 +58,11 @@ Token *tokenize(char *p) {
             continue;
         }
 
-        if(('A' <= *p && *p <= 'Z') || ('a' <= *p && *p <= 'z') || (*p == '_')) {
+        if(is_alnum(*p)) {
             char *q = p;
             p++;
 
-            while(('A' <= *p && *p <= 'Z') || ('a' <= *p && *p <= 'z') || (*p == '_') || ('0' <= *p && *p <= '9')){
+            while(is_alnum(*p) || ('0' <= *p && *p <= '9')){
                 p++;
             }
 
